@@ -5,6 +5,7 @@
         Starting,
         Started,
         Stopped,
-        Unkown
+        Unkown,
+        Stopping
     }
 }

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Management;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JarleF.NAnt.Tasks.Core;
+using Microsoft.Web.Administration;
 
 namespace JarleF.NAnt.Tasks.Utils
 {
@@ -10,15 +9,15 @@ namespace JarleF.NAnt.Tasks.Utils
     {
         public static List<IISSite> GetSites(string computerName)
         {
-            ManagementObjectCollection sites = CreateClassObject(computerName, "Site").GetInstances();
-
-            var query = from s in sites.OfType<ManagementObject>()
-                              select new IISSite()
-                              {
-                                  Id = Convert.ToInt32(s.GetPropertyValue("Id")),
-                                  Name = (string) s.GetPropertyValue("Name"),
-                                  Status = GetSiteStatus(s)
-                              };
+            ServerManager iisManager = ServerManager.OpenRemote(computerName);
+          
+            var query = from s in iisManager.Sites
+                        select new IISSite()
+                                   {
+                                       Id = s.Id,
+                                       Name = s.Name,
+                                       Status = GetSiteStatus(s)
+                                   };
 
             return query.ToList();
         }
@@ -28,66 +27,50 @@ namespace JarleF.NAnt.Tasks.Utils
             return GetSites(computerName).Where(s => string.Compare(s.Name, siteName, true) == 0).SingleOrDefault();
         }
 
-        public static void Start(string computerName, int siteId)
+        public static void Start(string computerName, long siteId)
         {
-            ManagementObjectCollection sites = CreateClassObject(computerName, "Site").GetInstances();
+             ServerManager iisManager = ServerManager.OpenRemote(computerName);
 
-            var query = from s in sites.OfType<ManagementObject>()
-                        where Convert.ToInt32(s.GetPropertyValue("Id")) == siteId
+            var query = from s in iisManager.Sites
+                         where s.Id == siteId
+                         select s;
+
+            var site = query.SingleOrDefault();
+
+            if (site != null)
+            {
+                site.Start();
+            }
+        }
+
+        public static void Stop(string computerName, long siteId)
+        {
+            ServerManager iisManager = ServerManager.OpenRemote(computerName);
+
+            var query = from s in iisManager.Sites
+                        where s.Id == siteId
                         select s;
 
             var site = query.SingleOrDefault();
 
             if (site != null)
             {
-                site.InvokeMethod("Start", new object[0]);
+                site.Stop();
             }
         }
 
-        public static void Stop(string computerName, int siteId)
+        private static IISSiteStatus GetSiteStatus(Site site)
         {
-           ManagementObjectCollection sites = CreateClassObject(computerName, "Site").GetInstances();
-
-            var query = from s in sites.OfType<ManagementObject>()
-                        where Convert.ToInt32(s.GetPropertyValue("Id")) == siteId
-                        select s;
-
-            var site = query.SingleOrDefault();
-
-            if(site != null)
+            switch (site.State)
             {
-                site.InvokeMethod("Stop", new object[0]);
-            }
-        }
-
-        private static ManagementClass CreateClassObject(string computerName, string path)
-        {
-            var connection = new ConnectionOptions
-            {
-                Impersonation = ImpersonationLevel.Impersonate,
-                Authentication = AuthenticationLevel.PacketPrivacy
-            };
-
-            var scope = new ManagementScope("\\\\" + computerName + "\\root\\webadministration", connection);
-           
-            return new ManagementClass(
-                scope,
-                new ManagementPath(path),
-                new ObjectGetOptions()
-             );
-        }
-
-        private static IISSiteStatus GetSiteStatus(ManagementObject site)
-        {
-            var status = (uint) site.InvokeMethod("GetState", new object[0]);
-            switch (status)
-            {
-                case 0:
+                case ObjectState.Starting:
                     return IISSiteStatus.Starting;
-                case 1:
+                case ObjectState.Started:
                     return IISSiteStatus.Started;
-                case 3:
+                case ObjectState.Stopped:
                     return IISSiteStatus.Stopped;
+                case ObjectState.Stopping:
+                    return IISSiteStatus.Stopping;
                 default:
                     return IISSiteStatus.Unkown;
             }

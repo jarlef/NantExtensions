@@ -2,7 +2,7 @@
 {
     public class IISSite
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Name { get; set; }
         public IISSiteStatus Status { get; set; }
 
