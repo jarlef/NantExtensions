@@ -32,7 +32,7 @@ namespace JarleF.NAnt.Tasks
 
             if (site == null)
             {
-                throw new BuildException("Could not find site '" + SiteName + "' on '" + Machine + "'");
+                throw new BuildException("Could not find site '{0}' on '{1}'".FormatString(SiteName, Machine));
             }
 
             switch (action)
