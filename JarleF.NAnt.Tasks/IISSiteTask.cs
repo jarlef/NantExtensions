@@ -49,12 +49,12 @@ namespace JarleF.NAnt.Tasks
            
             site = IISHelper.GetSite(Machine, site.Name);
 
-            if (action == "stop" && site.Status != IISSiteStatus.Stopped)
+            if (action == "stop" && site.Status != IISSiteStatus.Stopped && site.Status != IISSiteStatus.Unkown)
             {
                 throw new BuildException("Failed to stop site '{0}' on '{1}'".FormatString(site.Name, Machine));
             }
 
-            if (action == "start" && site.Status != IISSiteStatus.Started)
+            if (action == "start" && site.Status != IISSiteStatus.Started && site.Status != IISSiteStatus.Unkown)
             {
                 throw new BuildException("Failed to start site '{0}' on '{1}'".FormatString(site.Name, Machine));
             }
