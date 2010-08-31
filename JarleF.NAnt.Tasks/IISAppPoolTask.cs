@@ -49,12 +49,12 @@ namespace JarleF.NAnt.Tasks
 
             applicationPool = IISHelper.GetApplicationPool(Machine, AppPoolName);
 
-            if (action == "stop" && applicationPool.Status != IISSiteStatus.Stopped && applicationPool.Status != IISSiteStatus.Unkown)
+            if (action == "stop" && applicationPool.Status != IISSiteStatus.Stopped && applicationPool.Status != IISSiteStatus.Stopping && applicationPool.Status != IISSiteStatus.Unkown)
             {
                 throw new BuildException("Failed to stop application pool '{0}' on '{1}'".FormatString(applicationPool.Name, Machine));
             }
 
-            if (action == "start" && applicationPool.Status != IISSiteStatus.Started && applicationPool.Status != IISSiteStatus.Unkown)
+            if (action == "start" && applicationPool.Status != IISSiteStatus.Started && applicationPool.Status != IISSiteStatus.Starting && applicationPool.Status != IISSiteStatus.Unkown)
             {
                 throw new BuildException("Failed to start application pool '{0}' on '{1}'".FormatString(applicationPool.Name, Machine));
             }
