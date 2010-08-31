@@ -7,26 +7,50 @@ namespace JarleF.Nant.Tasks.ManualTest
     {
         static void Main(string[] args)
         {
-            var sites = IISHelper.GetSites("localhost");
-
-            foreach (var site in sites)
+            try
             {
-                Console.WriteLine(site.ToString());
+
+                const string machineName = "localhost";
+                const string siteName = "Default Web Site";
+                const string appPoolName = "DefaultAppPool";
+
+                var sites = IISHelper.GetSites(machineName);
+
+                foreach (var site in sites)
+                {
+                    Console.WriteLine(site.ToString());
+                }
+
+                var defaultWebSite = IISHelper.GetSite(machineName, siteName);
+
+                Console.WriteLine(defaultWebSite);
+
+                IISHelper.StopSite(machineName, defaultWebSite.Id);
+                defaultWebSite = IISHelper.GetSite(machineName, siteName);
+                Console.WriteLine(defaultWebSite);
+
+                IISHelper.StartSite(machineName, defaultWebSite.Id);
+                defaultWebSite = IISHelper.GetSite(machineName, siteName);
+                Console.WriteLine(defaultWebSite);
+
+                var defaultAppPool = IISHelper.GetApplicationPool(machineName, appPoolName);
+
+                Console.WriteLine(defaultAppPool);
+
+                IISHelper.StopApplicationPool(machineName, appPoolName);
+                defaultAppPool = IISHelper.GetApplicationPool(machineName, appPoolName);
+                Console.WriteLine(defaultAppPool);
+
+                IISHelper.StartApplicationPool(machineName, appPoolName);
+                defaultAppPool = IISHelper.GetApplicationPool(machineName, appPoolName);
+                Console.WriteLine(defaultAppPool);
+
+                Console.ReadLine();
             }
-
-            var defaultWebSite = IISHelper.GetSite("localhost", "Default Web Site");
-
-            Console.WriteLine(defaultWebSite);
-
-            IISHelper.Stop("localhost", defaultWebSite.Id);
-            defaultWebSite = IISHelper.GetSite("localhost", defaultWebSite.Name);
-            Console.WriteLine(defaultWebSite);
-
-            IISHelper.Start("localhost", defaultWebSite.Id);
-            defaultWebSite = IISHelper.GetSite("localhost", defaultWebSite.Name);
-            Console.WriteLine(defaultWebSite);
-
-            Console.ReadLine();
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
     }
 }

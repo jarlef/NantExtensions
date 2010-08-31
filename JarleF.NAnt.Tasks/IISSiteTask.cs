@@ -38,10 +38,10 @@ namespace JarleF.NAnt.Tasks
             switch (action)
             {
                 case "start":
-                    IISHelper.Start(Machine, site.Id);
+                    IISHelper.StartSite(Machine, site.Id);
                     break;
                 case "stop":
-                    IISHelper.Stop(Machine, site.Id);
+                    IISHelper.StopSite(Machine, site.Id);
                     break;
                 default:
                     throw new BuildException("Invalid action provided");

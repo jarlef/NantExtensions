@@ -11,16 +11,29 @@ namespace JarleF.NAnt.Tasks.Utils
         public static List<IISSite> GetSites(string computerName)
         {
             ServerManager iisManager = ServerManager.OpenRemote(computerName);
-            //ServerManager iisManager = new ServerManager();
-          
+
             var query = from s in iisManager.Sites
                         select new IISSite()
                                    {
                                        Id = s.Id,
                                        Name = s.Name,
-                                       Status = GetSiteStatus(s)
+                                       Status = GetStatus(s.State)
                                    };
 
+            return query.ToList();
+        }
+
+        public static List<IISAppPool> GetApplicationPools(string computerName)
+        {
+            ServerManager iisManager = ServerManager.OpenRemote(computerName);
+
+            var query = from a in iisManager.ApplicationPools.OfType<ApplicationPool>()
+                        select new IISAppPool()
+                                   {
+                                       Name = a.Name,
+                                       Status = GetStatus(a.State)
+                                   };
+            
             return query.ToList();
         }
 
@@ -29,11 +42,15 @@ namespace JarleF.NAnt.Tasks.Utils
             return GetSites(computerName).Where(s => string.Compare(s.Name, siteName, true) == 0).SingleOrDefault();
         }
 
-        public static void Start(string computerName, long siteId)
+        public static IISAppPool GetApplicationPool(string computerName, string appPoolName)
+        {
+            return GetApplicationPools(computerName).Where(a => string.Compare(a.Name, appPoolName, true) == 0).SingleOrDefault();
+        }
+
+        public static void StartSite(string computerName, long siteId)
         {
             ServerManager iisManager = ServerManager.OpenRemote(computerName);
-            //ServerManager iisManager = new ServerManager();
-          
+            
             var query = from s in iisManager.Sites
                          where s.Id == siteId
                          select s;
@@ -46,11 +63,10 @@ namespace JarleF.NAnt.Tasks.Utils
             }
         }
 
-        public static void Stop(string computerName, long siteId)
+        public static void StopSite(string computerName, long siteId)
         {
             ServerManager iisManager = ServerManager.OpenRemote(computerName);
-            //ServerManager iisManager = new ServerManager();
-          
+            
             var query = from s in iisManager.Sites
                         where s.Id == siteId
                         select s;
@@ -63,12 +79,49 @@ namespace JarleF.NAnt.Tasks.Utils
             }
         }
 
-        private static IISSiteStatus GetSiteStatus(Site site)
+        public static void StartApplicationPool(string computerName, string appPoolName)
+        {
+            ServerManager iisManager = ServerManager.OpenRemote(computerName);
+
+            var applicationPool = iisManager.ApplicationPools[appPoolName];
+            
+            if(applicationPool == null)
+            {
+                return;
+            }
+            var state = applicationPool.State;
+
+            if (state != ObjectState.Started && state != ObjectState.Starting)
+            {
+                applicationPool.Start();
+            }
+        }
+
+        public static void StopApplicationPool(string computerName, string appPoolName)
+        {
+            ServerManager iisManager = ServerManager.OpenRemote(computerName);
+            
+            var applicationPool = iisManager.ApplicationPools[appPoolName];
+
+            if (applicationPool == null)
+            {
+                return;
+            }
+            var state = applicationPool.State;
+
+            if (state != ObjectState.Stopping && state != ObjectState.Stopped)
+            {
+                applicationPool.Stop();
+            }
+        }
+
+
+        private static IISSiteStatus GetStatus(ObjectState state)
         {
             try
             {
 
-                switch (site.State)
+                switch (state)
                 {
                     case ObjectState.Starting:
                         return IISSiteStatus.Starting;

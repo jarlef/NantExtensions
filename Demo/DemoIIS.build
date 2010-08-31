@@ -1,20 +1,48 @@
 <?xml version="1.0"?>
-<project name="IIS Demo" default="run" basedir=".">
+<project name="IIS Demo" default="Test" basedir=".">
     <description>The IIS Tasks demo.</description>
   
-    <target name="run" description="Runs the IIS Tasks">
+    <target name="Test" description="Runs the IIS Tasks">
       <loadtasks assembly="..\JarleF.NAnt.Tasks\bin\debug\JarleF.NAnt.Tasks.dll" />
 
-      <iissitestatus machine="localhost" sitename="default web site" propertyname="sitestatus" />
-      <echo message="Site status: ${sitestatus}" />
+      <call target="SiteTests" />
 
-      <iissite sitename="Default Web Site" action="stop" />
-      <iissitestatus machine="localhost" sitename="default web site" propertyname="sitestatus" />
-      <echo message="Site status: ${sitestatus}" />
-
-      <iissite machine="localhost" sitename="Default Web Site" action="start" />
-      <iissitestatus machine="localhost" sitename="default web site" propertyname="sitestatus" />
-      <echo message="Site status: ${sitestatus}" />
-      
+      <call target="AppPoolTests" />
     </target>
+
+  <target name="SiteTests" description="Runs the IIS Site Tasks">
+
+    <!-- check site status-->
+    <iissitestatus machine="localhost" sitename="default web site" propertyname="sitestatus" />
+    <echo message="Site status: ${sitestatus}" />
+
+    <!-- stop site -->
+    <iissite sitename="Default Web Site" action="stop" />
+    <iissitestatus machine="localhost" sitename="default web site" propertyname="sitestatus" />
+    <echo message="Site status: ${sitestatus}" />
+
+    <!-- start site -->
+    <iissite machine="localhost" sitename="Default Web Site" action="start" />
+    <iissitestatus machine="localhost" sitename="default web site" propertyname="sitestatus" />
+    <echo message="Site status: ${sitestatus}" />
+
+  </target>
+
+  <target name="AppPoolTests" description="Runs the IIS AppPool Tasks">
+
+    <!-- check site status-->
+    <iisapppool2status machine="localhost" apppoolname="DefaultAppPool" propertyname="apppoolstatus" />
+    <echo message="AppPool status: ${apppoolstatus}" />
+
+    <!-- stop site -->
+    <iisapppool2 apppoolname="DefaultAppPool" action="stop" />
+    <iisapppool2status machine="localhost" apppoolname="DefaultAppPool" propertyname="apppoolstatus" />
+    <echo message="AppPool status: ${apppoolstatus}" />
+
+    <!-- start site -->
+    <iisapppool2 machine="localhost" apppoolname="DefaultAppPool" action="start" />
+    <iisapppool2status machine="localhost" apppoolname="DefaultAppPool" propertyname="apppoolstatus" />
+    <echo message="AppPool status: ${apppoolstatus}" />
+
+  </target>
 </project>

@@ -48,7 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\IISAppPool.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="IISAppPoolStatusTask.cs" />
+    <Compile Include="IISAppPoolTask.cs" />
     <Compile Include="IISSiteStatusTask.cs" />
     <Compile Include="Core\IISSite.cs" />
     <Compile Include="Core\IISSiteStatus.cs" />
