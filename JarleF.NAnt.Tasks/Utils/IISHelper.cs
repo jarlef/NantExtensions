@@ -17,7 +17,7 @@ namespace JarleF.NAnt.Tasks.Utils
                                    {
                                        Id = s.Id,
                                        Name = s.Name,
-                                       Status = GetStatus(s.State)
+                                       Status = GetStatus(s)
                                    };
 
             return query.ToList();
@@ -31,7 +31,7 @@ namespace JarleF.NAnt.Tasks.Utils
                         select new IISAppPool()
                                    {
                                        Name = a.Name,
-                                       Status = GetStatus(a.State)
+                                       Status = GetStatus(a)
                                    };
             
             return query.ToList();
@@ -89,9 +89,10 @@ namespace JarleF.NAnt.Tasks.Utils
             {
                 return;
             }
-            var state = applicationPool.State;
 
-            if (state != ObjectState.Started && state != ObjectState.Starting)
+            var state = GetStatus(applicationPool);
+
+            if (state != IISSiteStatus.Started && state != IISSiteStatus.Starting)
             {
                 applicationPool.Start();
             }
@@ -107,39 +108,57 @@ namespace JarleF.NAnt.Tasks.Utils
             {
                 return;
             }
-            var state = applicationPool.State;
 
-            if (state != ObjectState.Stopping && state != ObjectState.Stopped)
+            var state = GetStatus(applicationPool);
+
+            if (state != IISSiteStatus.Stopped && state != IISSiteStatus.Stopping)
             {
                 applicationPool.Stop();
             }
         }
 
 
-        private static IISSiteStatus GetStatus(ObjectState state)
+        private static IISSiteStatus GetStatus(ApplicationPool applicationPool)
         {
             try
             {
-
-                switch (state)
-                {
-                    case ObjectState.Starting:
-                        return IISSiteStatus.Starting;
-                    case ObjectState.Started:
-                        return IISSiteStatus.Started;
-                    case ObjectState.Stopped:
-                        return IISSiteStatus.Stopped;
-                    case ObjectState.Stopping:
-                        return IISSiteStatus.Stopping;
-                    default:
-                        return IISSiteStatus.Unkown;
-                }
+                return GetStatus(applicationPool.State);
             }
             catch(Exception)
             {
                 return IISSiteStatus.Unkown;
             }
         }
+
+        private static IISSiteStatus GetStatus(Site site)
+        {
+            try
+            {
+                return GetStatus(site.State);
+            }
+            catch (Exception)
+            {
+                return IISSiteStatus.Unkown;
+            }
+        }
+
+        private static IISSiteStatus GetStatus(ObjectState state)
+        {
+            switch (state)
+            {
+                case ObjectState.Starting:
+                    return IISSiteStatus.Starting;
+                case ObjectState.Started:
+                    return IISSiteStatus.Started;
+                case ObjectState.Stopped:
+                    return IISSiteStatus.Stopped;
+                case ObjectState.Stopping:
+                    return IISSiteStatus.Stopping;
+                default:
+                    return IISSiteStatus.Unkown;
+            }
+        }
+        
 
     }
 }
