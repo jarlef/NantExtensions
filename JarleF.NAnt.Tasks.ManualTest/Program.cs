@@ -9,7 +9,6 @@ namespace JarleF.Nant.Tasks.ManualTest
         {
             try
             {
-
                 const string machineName = "localhost";
                 const string siteName = "Default Web Site";
                 const string appPoolName = "DefaultAppPool";

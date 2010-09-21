@@ -1,4 +1,5 @@
-﻿using JarleF.NAnt.Tasks.Core;
+﻿using System.Threading;
+using JarleF.NAnt.Tasks.Core;
 using JarleF.NAnt.Tasks.Utils;
 using NAnt.Core;
 using NAnt.Core.Attributes;
@@ -46,6 +47,8 @@ namespace JarleF.NAnt.Tasks
                 default:
                     throw new BuildException("Invalid action provided");
             }
+
+            Thread.Sleep(100);
 
             applicationPool = IISHelper.GetApplicationPool(Machine, AppPoolName);
 
