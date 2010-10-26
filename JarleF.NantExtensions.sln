@@ -4,6 +4,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{4E03CF4F-14BD-4F86-B393-BA8716F2F6AE}"
 	ProjectSection(SolutionItems) = preProject
 		Demo\DemoIIS.build = Demo\DemoIIS.build
+		Demo\DemoIni.build = Demo\DemoIni.build
+		Demo\DemoIni.ini = Demo\DemoIni.ini
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JarleF.NAnt.Tasks.ManualTest", "JarleF.NAnt.Tasks.ManualTest\JarleF.NAnt.Tasks.ManualTest.csproj", "{E1ABB0B2-93D7-4F36-8C45-6127208F9348}"

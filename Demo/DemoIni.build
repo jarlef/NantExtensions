@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="Ini Demo" default="Test" basedir=".">
+  <description>The Ini Tasks demo.</description>
+
+  <target name="Test" description="Runs the IIS Tasks">
+    <loadtasks assembly="..\JarleF.NAnt.Tasks\bin\debug\JarleF.NAnt.Tasks.dll" />
+
+    <call target="IniRead2Tests" />
+  </target>
+
+  <target name="IniRead2Tests" description="Run the IniRead2 Tests">
+    <!-- check site status-->
+    <iniread2 property="mylongstring" filename="DemoIni.ini" section="Test" key="longstring" default="" />
+
+    <if test="${string::get-length(mylongstring) != 840}">
+      <fail message="The complete string was not returned" />      
+    </if>
+    <echo message="${mylongstring}" />
+  </target>
+</project>

@@ -56,8 +56,10 @@
     <Compile Include="Core\IISSite.cs" />
     <Compile Include="Core\IISSiteStatus.cs" />
     <Compile Include="IISSiteTask.cs" />
+    <Compile Include="IniRead2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\IISHelper.cs" />
+    <Compile Include="Utils\IniFile.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <project name="IIS Demo" default="Test" basedir=".">
-    <description>The IIS Tasks demo.</description>
-  
-    <target name="Test" description="Runs the IIS Tasks">
-      <loadtasks assembly="..\JarleF.NAnt.Tasks\bin\debug\JarleF.NAnt.Tasks.dll" />
+  <description>The IIS Tasks demo.</description>
 
-      <call target="SiteTests" />
+  <target name="Test" description="Runs the IIS Tasks">
+    <loadtasks assembly="..\JarleF.NAnt.Tasks\bin\debug\JarleF.NAnt.Tasks.dll" />
 
-      <call target="AppPoolTests" />
-    </target>
+    <call target="SiteTests" />
+
+    <call target="AppPoolTests" />
+  </target>
 
   <target name="SiteTests" description="Runs the IIS Site Tasks">
 
